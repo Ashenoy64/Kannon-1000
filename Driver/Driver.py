@@ -9,6 +9,7 @@ from database import Database
 import asyncio
 import uuid
 import sys
+import os
 
 
 def generate_random_node_id():
@@ -37,7 +38,6 @@ class DriverKafka(Tests,Comms,LogStore,Database):
         
 
     def StartDriver(self):
-        print("Starting Driver")
         self.consumerThread_id = threading.Thread(target=self.ConsumerHandler,args=(self,))
         self.consumerThread_id.start()
         self.producer.send('register',{
@@ -81,7 +81,6 @@ class DriverKafka(Tests,Comms,LogStore,Database):
 
         
         message = {"node_ip":self.node_ip,'node_id':self.node_id,'status':'alive'}
-        print("Sent",flush=True)
         while True:
             try:
                 time.sleep(heartBeatInterVal)
@@ -93,14 +92,18 @@ class DriverKafka(Tests,Comms,LogStore,Database):
                 print("Something unknown happend ")
 
 if __name__ == "__main__":
-    Tsunami={"test_id":1,"target":"http://localhost:3010/","type":"tsunami","params":{"delay":1,"number_of_request":10,"header":""}}
-    Avalanche={"test_id":2,"target":"http://localhost:3010/","type":"avalanche","number_of_request":10,"params":{"header":"","delay":0}}
+    # Tsunami={"test_id":1,"target":"http://localhost:3010/","type":"tsunami","params":{"delay":1,"number_of_request":10,"header":""}}
+    # Avalanche={"test_id":2,"target":"http://localhost:3010/","type":"avalanche","number_of_request":10,"params":{"header":"","delay":0}}
 
     master_node_ip=sys.argv[1]
-    driver_node_ip=sys.argv[2]
+    driver_node_name=sys.argv[2]
     heartBeat=int(sys.argv[3])
     
-    driver = DriverKafka(consumer_topics,generate_random_node_id(),master_node_ip,driver_node_ip,heartBeat)
+    if 'clearDB' in sys.argv and os.path.exists('db'):
+        os.remove('db')
+        
+    
+    driver = DriverKafka(consumer_topics,generate_random_node_id(),master_node_ip,driver_node_name,heartBeat)
     
     driver.StartDriver()
     

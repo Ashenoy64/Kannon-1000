@@ -1,5 +1,0 @@
--- database: /home/meowmaster/BD/RR-Team-68-Distributed-Load-Testing-System-main/OrchestratorNode/dlts.db
-
--- Use the ▷ button in the top right corner to run the entire file.
-
-TRUNCATE "node_report";

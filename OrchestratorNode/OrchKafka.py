@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 from kafka import KafkaProducer,KafkaConsumer
 import threading
-import time
 import json
 from streamlit.runtime.scriptrunner import add_script_run_ctx
+
 #consuming topics
 consumer_topics = ['register','metrics','heart_beat']
-import streamlit as st
 
 class OrchKafka:
     consumer = None

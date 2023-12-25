@@ -205,8 +205,8 @@ CREATE TABLE node_report (
                 self.cursor.execute(insert_query, data_to_insert)
 
             self.conn.commit()  
-        except :
-            print("Failed to insert or update node report:")
+        except Exception as e:
+            print("Failed to insert or update node report:",e)
             self.conn.rollback()
         
     def GetAllTest(self):
@@ -228,7 +228,7 @@ CREATE TABLE node_report (
 
 
     def GetNodeReport(self,test_id):
-        query = 'Select node_report.node_id,node_ip,min_latency,max_latency,mean_latency,median_latency from node_report,Driver where node_report.test_id = ? and node_report.node_id = Driver.node_id '
+        query = 'Select DISTINCT node_report.node_id,node_ip,min_latency,max_latency,mean_latency,median_latency from node_report,Driver where node_report.test_id = ? and node_report.node_id = Driver.node_id '
         try:
             self.cursor.execute(query,(test_id,))
             return self.cursor.fetchall()

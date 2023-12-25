@@ -5,9 +5,9 @@ import uuid
 import pandas as pd
 from Database import Database
 from streamlit_autorefresh import st_autorefresh
-
 from streamlit.runtime.scriptrunner import add_script_run_ctx
-
+import sys
+import os
 
 
 
@@ -22,27 +22,6 @@ def fetch_tests():
 
 
 def display_driver():
-    st.markdown(
-        "<h1 style='text-align: center;'>Active Driver List</h1>",
-        unsafe_allow_html=True
-       )
-    data = st.session_state.db.GetNodeDetails()
-
-    st.markdown(
-        f"""
-        <style>
-            table {{
-                width: 100%;
-                margin-left: 10px;
-                margin-right: 10px;
-            }}
-        </style>
-        """
-        , unsafe_allow_html=True
-    )
-    
-    st.dataframe(data)
-
     _data = st.session_state.db.GetNodeDetail()
 
 
@@ -53,22 +32,23 @@ def display_driver():
             st.write("Node ID")
                 
         with mid:
-            st.write("Node IP")
+            st.write("Node Name")
 
         with end:
             st.write("Last HeartBeat")
     for node in _data:
-        with st.container():
-                start,mid,end = st.columns(3)
+        if time.time()-int(node[2]) <=10:
+            with st.container():
+                    start,mid,end = st.columns(3)
 
-                with start:
-                    st.write(f"{node[0]}")
-                
-                with mid:
-                    st.write(f'{node[1]}')
+                    with start:
+                        st.write(f"{node[0]}")
+                    
+                    with mid:
+                        st.write(f'{node[1]}')
 
-                with end:
-                   st.write(time.time()-int(node[2]))
+                    with end:
+                        st.write(time.time()-int(node[2]))
 
 
 
@@ -248,8 +228,19 @@ def main():
         st.session_state.page_state={}
         display_driver()
 
+def clearDB():
+    if os.path.exists('dlts.db'):
+        os.remove('dlts.db')
+
 
 if __name__ == "__main__":
+    args = sys.argv[1:]
+   
+    if 'clearDB' in args and "clearDB" not in st.session_state:
+        st.session_state.clearDB = True 
+        clearDB()
+    
+        
     if "db" not in st.session_state:
         st.session_state.db = Database('dlts.db')
 

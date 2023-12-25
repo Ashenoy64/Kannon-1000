@@ -49,11 +49,9 @@ CREATE TABLE test_report (
 
 
         try:
-            print("Creating Tables")
             self.cursor.execute(tests)
             
             self.cursor.execute(report)
-            print("Done creating")
             
         except Exception as e:
             print('Failed to create table due to following reason: ',e)
